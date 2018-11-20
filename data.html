@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+	</link>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js">
+
+	</script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js">
+
+	</script>
+	<title>DATA</title>
+	<script>
+		$(document).ready(function(){
+
+            var submitData=[];
+
+
+
+            $("#btn_submit").click(function(){
+                $("tr.td").each(function(){
+                    var item={};
+                    item.name=$("#input_name").val();
+                    item.sku=$(this).children(".sku").text();
+                    item.devid=$(this).children(".devid").text();
+                    item.hdd=$(this).children(".hdd").children("select").val();
+                    item.defective=$(this).children(".defective").children("select").val();
+                    item.up=$(this).children(".up").children("select").val();
+                    item.pof=$(this).children(".pof").children("select").val();
+                    item.note1=$(this).children(".note1").children("input").val();
+                    item.note2=$(this).children(".note2").children("input").val();
+                    item.time=$(this).children(".time").text();
+
+                    submitData.push(item);
+
+
+                    // console.log(item);
+
+
+                });
+                submit(submitData);
+               
+
+
+            });
+
+            $("#input_id").keydown(function(event){
+                
+                if (event.keyCode==13) {
+                    
+                  // var date=new Date();
+                  addItem($("#input_id").val());
+                  $("#input_id").val("");
+
+                }
+
+
+            });
+
+            $("#btn_clear").click(function(){
+               $("tr.td").remove();
+            });
+
+            function submit(data){
+                $.ajax({
+                        type: "POST",
+                        url: "/add",
+                        contentType: "application/json; charset=utf-8",
+                        data: JSON.stringify(data),
+                        dataType: "json",
+                        success: function (message) {
+                            console.log("submit success");
+                            $("tr.td").remove();
+                            submitData=[];
+                        },
+                        error: function (message) {
+                            console.log("submit failed")
+                            submitData=[];
+                        }
+                    });
+            }
+
+            function getDailyData(){
+                var url="/api/daily"
+                $.get(url,function(data,status){
+                    for(var i in data){
+                var row='<tr class="data1">'
+                +'<td class="name">'+data[i].NAME+'</td>'
+                +'<td class="count">'+data[i].COUNT+'</td>'
+                +'</tr>';
+                 $("#personal").append(row);
+                    }
+                   
+                 });
+
+                 $.get("/api/defective",function(data,status){
+                    for(var i in data){
+                var row='<tr class="data1">'
+                +'<td class="defective">'+data[i].DEFECTIVE+'</td>'
+                +'<td class="count">'+data[i].COUNT+'</td>'
+                +'</tr>';
+                 $("#defective").append(row);
+                    }
+                   
+                 });
+
+
+
+
+            }
+
+            getDailyData();
+
+
+
+
+
+
+         
+
+            function getNowFormatDate() {
+        var date = new Date();
+        var seperator1 = "-";
+        var seperator2 = ":";
+
+        var year = date.getFullYear();
+        var month = date.getMonth() + 1;
+        var strDate = date.getDate();
+        var h=date.getHours();
+        var m=date.getMinutes();
+        var s=date.getSeconds(); 
+        m=checkTime(m);
+        s=checkTime(s);
+        if (month >= 1 && month <= 9) {
+            month = "0" + month;
+        }
+        if (strDate >= 0 && strDate <= 9) {
+            strDate = "0" + strDate;
+        }
+        var currentdate = year + seperator1 + month + seperator1 + strDate +" "+h+":"+m+":"+s;;
+        return currentdate;
+
+    }
+
+    function checkTime(i){
+    if (i<10){
+        i="0" + i;
+    }
+    return i;
+}
+
+            function addItem(id) {
+                var row='<tr class="td">'
+                +'<td class="sku">'+$("#input_sku").val()+'</td>'
+                +'<td class="devid">'+id+'</td>'
+                +'<td class="hdd"><select><option value="0"></option><option value="1">500G</option><option value="2">1T</option><option value="3">2T</option></select></td>'
+                +'<td class="up"><select><option value="0">N</option><option value="1">Y</option></select></td>'
+                +'<td class="defective"><select><option value="0">N</option><option value="1">Y</option></select></td>'
+                +'<td class="pof"><select><option value="0"></option><option value="1">DAMAGE</option><option value="2">NIGHT VISION</option><option value="3">MOTION</option><option value="4">SOUND</option><option value="5">MOTOR</option><option value="6">CONNECTIONS</option></select></td>'
+                +'<td class="note1"><input type="text" name="nnote1"></td>'
+                +'<td class="note2"><input type="text" name="nnote2"></td>'
+                +'<td class="time">'+getNowFormatDate()+'</td>'
+                +'<td class="delete"><button id="btn_del">DELETE</button></td>'
+                +'</tr>';
+
+                $("#data_table").append(row);
+
+            }
+
+
+
+        });
+	</script>
+</head>
+
+<body>
+	<dir id="container" class="container-fluid">
+		<h2>DAILY DATA</h2>
+        <h4>TOTAL</h4>
+        <table id="defective" class="table table-striped">
+        <tr>
+            <th>DEFECTIVE</th>
+            <th>QTY</th>   
+        </tr>
+        </table>
+
+
+
+
+
+        <h4>PERSONAL DATA</h4>
+    <table id="personal" class="table table-striped">
+        <tr>
+            <th>NAME</th>
+            <th>QTY</th>   
+        </tr>
+    </table>
+
+
+	</dir>
+</body>
+
+</html>
