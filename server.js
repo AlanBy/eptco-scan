@@ -3,13 +3,19 @@ var app = express();
 var fs = require("fs");
 var bp = require('body-parser');
 var url=require('url');
-
 var mysql = require('mysql');
+
+
+var conf=fs.readFileSync("conf.json");
+var confj=JSON.parse(conf);
+
+
+
 var connection = mysql.createConnection({
-  host: '35.224.159.218',
-  user: 'root',
-  password: '07ddjslws',
-  database: 'qc'
+  host: confj.mysql,
+  user: confj.user,
+  password: confj.pwd,
+  database: confj.db
 });
 
 app.use(bp.json());
@@ -39,7 +45,7 @@ app.get('/data', function (req, res) {
 app.get('/api/daily',function(req,res){
 
 
-var searchSQL="SELECT `Data`.`NAME`,COUNT(*) AS COUNT FROM `Data` WHERE TO_DAYS(`Data`.DATE)=TO_DAYS(NOW()) GROUP BY `Data`.`NAME`";
+var searchSQL="SELECT `Data`.`NAME`,COUNT(*) AS COUNT FROM `Data` WHERE TO_DAYS(`Data`.DATE)=TO_DAYS(DATE_SUB(NOW(),INTERVAL 6 HOUR)) GROUP BY `Data`.`NAME`";
 
 connection.query(searchSQL, function (error, results, fields) {
       if (error) throw error;
@@ -54,7 +60,7 @@ app.get('/api/personal',function(req,res){
 var params = url.parse(req.url, true).query;
 console.log(params);
 
-var searchSQL="SELECT * FROM `Data` WHERE TO_DAYS(`Data`.DATE)=TO_DAYS(NOW()) AND `Data`.`NAME`=?";
+var searchSQL="SELECT * FROM `Data` WHERE TO_DAYS(`Data`.DATE)=TO_DAYS(DATE_SUB(NOW(),INTERVAL 6 HOUR)) AND `Data`.`NAME`=?";
 var data=[params.name];
 connection.query(searchSQL, data,function (error, results, fields) {
       if (error) throw error;
@@ -68,7 +74,7 @@ connection.query(searchSQL, data,function (error, results, fields) {
 app.get('/api/defective',function(req,res){
 
 
-var searchSQL="SELECT `Data`.`DEFECTIVE`, Count(*) AS COUNT FROM `Data` WHERE TO_DAYS(`Data`.DATE) = TO_DAYS(NOW()) GROUP BY  `Data`.`DEFECTIVE`";
+var searchSQL="SELECT `Data`.`DEFECTIVE`, Count(*) AS COUNT FROM `Data` WHERE TO_DAYS(`Data`.DATE) = TO_DAYS(DATE_SUB(NOW(),INTERVAL 6 HOUR)) GROUP BY  `Data`.`DEFECTIVE`";
 
 connection.query(searchSQL, function (error, results, fields) {
       if (error) throw error;
@@ -126,7 +132,7 @@ app.post('/add', function (req, res) {
 
 
 
-var server = app.listen(8080, function () {
+var server = app.listen(confj.port, function () {
 
   var host = server.address().address
   var port = server.address().port
