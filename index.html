@@ -10,7 +10,7 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js">
     </script>
-    <title>Test</title>
+    <title>SCAN RECORD</title>
     <style type="text/css">
     #btn_submit{margin-left:100px;margin-right:50px}
     #btn_clear{margin-right:50px}
@@ -21,10 +21,14 @@
         $(document).ready(function(){
 
             var submitData=[];
+            var localDataKey="eptco_scan";
+            loadData();
+            updateQty;
 
 
 
             $("#btn_submit").click(function(){
+                submitData=[];
                 $("tr.td").each(function(){
                     var item={};
                     item.name=$("#input_name").val();
@@ -47,9 +51,98 @@
                 });
                 submit(submitData);
                
-
-
             });
+
+
+
+
+            $("#btn_save").click(function(){
+                saveData();
+            });
+
+            $("#btn_load").click(function(){
+                loadData();
+            });
+
+
+            function saveData(){
+                var data=[];
+                $("tr.td").each(function(){
+                    var item={};
+                    item.name=$("#input_name").val();
+                    item.sku=$(this).children(".sku").text();
+                    item.devid=$(this).children(".devid").text();
+                    item.hdd=$(this).children(".hdd").children("select").val();
+                    item.defective=$(this).children(".defective").children("select").val();
+                    item.up=$(this).children(".up").children("select").val();
+                    item.pof=$(this).children(".pof").children("select").val();
+                    item.note1=$(this).children(".note1").children("input").val();
+                    item.note2=$(this).children(".note2").children("input").val();
+                    item.time=$(this).children(".time").text();
+
+                    data.push(item);
+                    // console.log(item);
+                });
+                var str = JSON.stringify(data);
+                localStorage.setItem(localDataKey,str);
+
+
+            }
+
+            function loadData(){
+                var temp=localStorage.getItem(localDataKey);
+                console.log(temp);
+                var data=JSON.parse(temp);
+                createTable(data);
+            }
+
+            function clearLocalData(){
+                localStorage.clear();
+            }
+
+            function createTable(data){
+
+                for(var i in data){
+
+                 var row='<tr class="td">'
+                +'<td class="sku">'+data[i].sku+'</td>'
+                +'<td class="devid">'+data[i].devid+'</td>'
+                +'<td class="hdd"><select><option value="0"></option><option value="1">500G</option><option value="2">1T</option><option value="3">2T</option></select></td>'
+                +'<td class="up"><select><option value="0">N</option><option value="1">Y</option></select></td>'
+                +'<td class="defective"><select><option value="0">N</option><option value="1">Y</option></select></td>'
+                +'<td class="pof"><select><option value="0"></option><option value="1">DAMAGE</option><option value="2">IR/NIGHT VISION</option><option value="3">Black Screen</option><option value="4">CABLE</option><option value="5">PURPLE</option><option value="6">SOLID GREEN</option><option value="7">UPDATE FAILED</option><option value="8">NO POWER/DEAD</option></select></td>'
+                +'<td class="note1"><input type="text" name="nnote1"></td>'
+                +'<td class="note2"><input type="text" name="nnote2"></td>'
+                +'<td class="time">'+data[i].time+'</td>'
+                +'<td class="delete"><button class="deltr">DELETE</button></td>'
+                +'</tr>';
+
+                var tr=$(row);
+
+
+
+                tr.children(".sku").text(data[i].sku);
+                tr.children(".devid").text(data[i].devid);
+                tr.children(".hdd").children("select").val(data[i].hdd);
+                tr.children(".defective").children("select").val(data[i].defective);
+                tr.children(".up").children("select").val(data[i].up);
+                tr.children(".pof").children("select").val(data[i].pof);
+                tr.children(".note1").children("input").val(data[i].note1);
+                tr.children(".note2").children("input").val(data[i].note2);
+                tr.children(".time").text(data[i].time);
+
+                // console.log(tr);
+
+                $("#data_table").append(tr);
+
+
+
+                }
+
+
+
+
+            }
 
 
             function updateQty(){
@@ -64,6 +157,7 @@
                     
                   // var date=new Date();
                   addItem($("#input_id").val());
+                  saveData();
                   updateQty();
                   $("#input_id").val("");
 
@@ -75,6 +169,7 @@
 
             $("#btn_clear").click(function(){
                $("tr.td").remove();
+               clearLocalData()
                updateQty();
             });
 
@@ -82,6 +177,7 @@
 
           $(this).parents().parents("tr").remove();
           updateQty();
+          saveData();
            })
 
             function deltr(){
@@ -100,6 +196,7 @@
                             console.log("submit success");
                             $("tr.td").remove();
                             updateQty();
+                            clearLocalData();
                             submitData=[];
                         },
                         error: function (message) {
