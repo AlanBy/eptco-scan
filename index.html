@@ -22,6 +22,7 @@
 
             var submitData=[];
             var localDataKey="eptco_scan";
+            var copyItem={};
             loadData();
             updateQty;
 
@@ -108,7 +109,7 @@
                 +'<td class="sku">'+data[i].sku+'</td>'
                 +'<td class="devid">'+data[i].devid+'</td>'
                 +'<td class="hdd"><select><option value="0"></option><option value="1">500G</option><option value="2">1T</option><option value="3">2T</option></select></td>'
-                +'<td class="up"><select><option value="0">N</option><option value="1">Y</option></select></td>'
+                +'<td class="up"><select><option value="1">Y</option><option value="0">N</option></select></td>'
                 +'<td class="defective"><select><option value="0">N</option><option value="1">Y</option></select></td>'
                 +'<td class="pof"><select><option value="0"></option><option value="1">DAMAGE</option><option value="2">IR/NIGHT VISION</option><option value="3">Black Screen</option><option value="4">CABLE</option><option value="5">PURPLE</option><option value="6">SOLID GREEN</option><option value="7">UPDATE FAILED</option><option value="8">NO POWER/DEAD</option></select></td>'
                 +'<td class="note1"><input type="text" name="nnote1"></td>'
@@ -180,6 +181,31 @@
           saveData();
            })
 
+             $(document).on('click','.ptr',function(){
+
+                var tr=$(this).parents().parents("tr");
+                tr.children(".hdd").children("select").val(copyItem.hdd);
+                tr.children(".defective").children("select").val(copyItem.defective);
+                tr.children(".up").children("select").val(copyItem.up);
+                tr.children(".pof").children("select").val(copyItem.pof);
+                tr.children(".note1").children("input").val(copyItem.note1);
+                tr.children(".note2").children("input").val(copyItem.note2);
+       
+           })
+
+             $(document).on('click','.cptr',function(){
+                 var tr=$(this).parents().parents("tr");
+                    copyItem.hdd=tr.children(".hdd").children("select").val();
+                    copyItem.defective=tr.children(".defective").children("select").val();
+                    copyItem.up=tr.children(".up").children("select").val();
+                    copyItem.pof=tr.children(".pof").children("select").val();
+                    copyItem.note1=tr.children(".note1").children("input").val();
+                    copyItem.note2=tr.children(".note2").children("input").val();
+           })
+
+
+           
+
             function deltr(){
                 console.log("del");
             }
@@ -232,7 +258,9 @@
         if (strDate >= 0 && strDate <= 9) {
             strDate = "0" + strDate;
         }
-        var currentdate = year + seperator1 + month + seperator1 + strDate +" "+h+":"+m+":"+s;;
+        // var currentdate = year + seperator1 + month + seperator1 + strDate +" "+h+":"+m+":"+s;;
+        var currentdate = year + seperator1 + month + seperator1 + strDate;
+
         return currentdate;
 
     }
@@ -255,7 +283,7 @@
                 +'<td class="note1"><input type="text" name="nnote1"></td>'
                 +'<td class="note2"><input type="text" name="nnote2"></td>'
                 +'<td class="time">'+getNowFormatDate()+'</td>'
-                +'<td class="delete"><button class="deltr">DELETE</button></td>'
+                +'<td class="delete"><button class="cptr">COPY</button><button class="ptr">PASTE</button><button class="deltr">DELETE</button></td>'
                 +'</tr>';
 
                 $("#data_table").prepend(row);
