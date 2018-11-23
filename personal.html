@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    </link>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js">
+    </script>
+    <title>Test</title>
+    <style type="text/css">
+    #btn_submit{margin-left:100px;margin-right:50px}
+    #btn_clear{margin-right:50px}
+    #currentQty{color:red; font-size:20px;}
+
+    </style>
+    <script>
+        $(document).ready(function(){
+
+            var submitData=[];
+
+
+
+            $("#btn_submit").click(function(){
+                $("tr.td").each(function(){
+                    var item={};
+                    item.name=$("#input_name").val();
+                    item.sku=$(this).children(".sku").text();
+                    item.devid=$(this).children(".devid").text();
+                    item.hdd=$(this).children(".hdd").children("select").val();
+                    item.defective=$(this).children(".defective").children("select").val();
+                    item.up=$(this).children(".up").children("select").val();
+                    item.pof=$(this).children(".pof").children("select").val();
+                    item.note1=$(this).children(".note1").children("input").val();
+                    item.note2=$(this).children(".note2").children("input").val();
+                    item.time=$(this).children(".time").text();
+
+                    submitData.push(item);
+
+
+                    // console.log(item);
+
+
+                });
+                submit(submitData);
+               
+
+
+            });
+
+
+            function updateQty(){
+                console.log($("tr.td").size());
+                $("#currentQty").text($("tr.td").size());
+
+            }
+
+            $("#input_id").keydown(function(event){
+                
+                if (event.keyCode==13) {
+                    
+                  // var date=new Date();
+                  addItem($("#input_id").val());
+                  updateQty();
+                  $("#input_id").val("");
+
+
+                }
+
+
+            });
+
+            $("#btn_clear").click(function(){
+               $("tr.td").remove();
+               updateQty();
+            });
+
+           $(document).on('click','.deltr',function(){
+
+          $(this).parents().parents("tr").remove();
+          updateQty();
+           })
+
+            function deltr(){
+                console.log("del");
+            }
+
+
+            function submit(data){
+                $.ajax({
+                        type: "POST",
+                        url: "/add",
+                        contentType: "application/json; charset=utf-8",
+                        data: JSON.stringify(data),
+                        dataType: "json",
+                        success: function (message) {
+                            console.log("submit success");
+                            $("tr.td").remove();
+                            updateQty();
+                            submitData=[];
+                        },
+                        error: function (message) {
+                            console.log("submit failed")
+                            submitData=[];
+                        }
+                    });
+            }
+
+
+
+
+
+
+         
+
+            function getNowFormatDate() {
+        var date = new Date();
+        var seperator1 = "-";
+        var seperator2 = ":";
+
+        var year = date.getFullYear();
+        var month = date.getMonth() + 1;
+        var strDate = date.getDate();
+        var h=date.getHours();
+        var m=date.getMinutes();
+        var s=date.getSeconds(); 
+        m=checkTime(m);
+        s=checkTime(s);
+        if (month >= 1 && month <= 9) {
+            month = "0" + month;
+        }
+        if (strDate >= 0 && strDate <= 9) {
+            strDate = "0" + strDate;
+        }
+        var currentdate = year + seperator1 + month + seperator1 + strDate +" "+h+":"+m+":"+s;;
+        return currentdate;
+
+    }
+
+    function checkTime(i){
+    if (i<10){
+        i="0" + i;
+    }
+    return i;
+}
+
+            function addItem(id) {
+                var row='<tr class="td">'
+                +'<td class="sku">'+$("#input_sku").val()+'</td>'
+                +'<td class="devid">'+id+'</td>'
+                +'<td class="hdd"><select><option value="0"></option><option value="1">500G</option><option value="2">1T</option><option value="3">2T</option></select></td>'
+                +'<td class="up"><select><option value="0">N</option><option value="1">Y</option></select></td>'
+                +'<td class="defective"><select><option value="0">N</option><option value="1">Y</option></select></td>'
+                +'<td class="pof"><select><option value="0"></option><option value="1">DAMAGE</option><option value="2">IR/NIGHT VISION</option><option value="3">Black Screen</option><option value="4">CABLE</option><option value="5">PURPLE</option><option value="6">SOLID GREEN</option><option value="7">UPDATE FAILED</option><option value="8">NO POWER/DEAD</option></select></td>'
+                +'<td class="note1"><input type="text" name="nnote1"></td>'
+                +'<td class="note2"><input type="text" name="nnote2"></td>'
+                +'<td class="time">'+getNowFormatDate()+'</td>'
+                +'<td class="delete"><button class="deltr">DELETE</button></td>'
+                +'</tr>';
+
+                $("#data_table").prepend(row);
+
+            }
+
+
+
+        });
+    </script>
+</head>
+
+<body>
+    <dir class="container-fluid">
+        <h2>PERSONAL DATA</h2>
+        Name:<input id="input_name" type="text"><button id="btn_submit">SUBMIT</button><button id="btn_clear">CLEAR</button>Current Qty:<span id="currentQty"></span><br><br>
+    ID:<input class="form-control" id="input_id" autofocus="true" type="text">
+    <h2>DATA</h2>
+
+    <table  class="table table-striped">
+        <thead>
+        <tr>
+            <th>SKU</th>
+            <th>DEVICE ID</th>
+            <th>HDD</th>
+            <th>UP</th>
+            <th>DEFECTIVE</th>
+            <th>POF</th>
+            <th>NOTE1</th>
+            <th>NOTE2</th>
+            <th>TIME</th>
+            <th>OPT</th>
+        </tr>
+        </thead>
+
+        <tbody id="data_table"></tbody>
+    
+
+  
+
+    </table>
+
+    
+    </dir>
+</body>
+</html>
