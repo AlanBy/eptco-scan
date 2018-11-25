@@ -11,16 +11,38 @@ var confj=JSON.parse(conf);
 
 
 
-var connection = mysql.createConnection({
+var dbconfig ={
   host: confj.mysql,
   user: confj.user,
   password: confj.pwd,
   database: confj.db
-});
+};
+
+var connection;
 
 app.use(bp.json());
 
-connection.connect();
+
+function handleError (err) {
+  if (err) {
+    // 如果是连接断开，自动重新连接
+    if (err.code === 'PROTOCOL_CONNECTION_LOST') {
+      connect();
+    } else {
+      console.error(err.stack || err);
+    }
+  }
+}
+
+// 连接数据库
+function connect () {
+  connection = mysql.createConnection(dbconfig);
+  connection.connect(handleError);
+  connection.on('error', handleError);
+}
+
+connect();
+
 
 // connection.query("SELECT * FROM `user`", function (error, results, fields) {
 //   if (error) throw error;
