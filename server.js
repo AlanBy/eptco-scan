@@ -21,6 +21,7 @@ var dbconfig ={
 var connection;
 
 app.use(bp.json());
+app.use(express.static('public'));
 
 
 function handleError (err) {
@@ -100,6 +101,23 @@ connection.query(searchSQL, data,function (error, results, fields) {
 
 });
 
+app.get('/api/addone',function(req,res){
+var params = url.parse(req.url, true).query;
+console.log(params);
+var addSQL = "INSERT INTO `qc`.`Realtime`(`devid`, `name`, `sku`,`time`) VALUES (?, ?, ?, ?)";
+var data=[params.devid,params.name,params.sku,params.time];
+
+connection.query(addSQL, data,function (error, results, fields) {
+      if (error) throw error;
+
+    res.status(200).json(results);
+    //   console.log(results);
+    });
+
+});
+
+
+
 app.get('/api/defective',function(req,res){
 
 
@@ -143,6 +161,7 @@ app.post('/add', function (req, res) {
     function insertData(data){
         connection.query(addSQL,data, function (error, results, fields) {
       if (error) throw error;
+      console.log(results);
       console.log("item added");
     });
     }

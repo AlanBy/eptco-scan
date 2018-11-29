@@ -160,7 +160,9 @@
                   addItem($("#input_id").val());
                   saveData();
                   updateQty();
+                  submitSingleData();
                   $("#input_id").val("");
+                
 
 
                 }
@@ -232,8 +234,38 @@
                     });
             }
 
+            function submitSingleData(){
+                var api="/api/addone";
+                var data="?devid="+$("#input_id").val()+"&name="+$("#input_name").val()+"&sku="+$("#input_sku").val()+"&time="+getNowFormatTime();
+                var url=api+data;
+                $.get(url,function(data,status){
+                    
+                });
+            }
 
 
+    function getNowFormatTime() {
+        var date = new Date();
+        var seperator1 = "-";
+        var seperator2 = ":";
+
+        var year = date.getFullYear();
+        var month = date.getMonth() + 1;
+        var strDate = date.getDate();
+        var h=date.getHours();
+        var m=date.getMinutes();
+        var s=date.getSeconds(); 
+        m=checkTime(m);
+        s=checkTime(s);
+        if (month >= 1 && month <= 9) {
+            month = "0" + month;
+        }
+        if (strDate >= 0 && strDate <= 9) {
+            strDate = "0" + strDate;
+        }
+        var currentdate = year + seperator1 + month + seperator1 + strDate +" "+h+":"+m+":"+s;;
+        return currentdate;
+    }
 
 
 
@@ -262,7 +294,6 @@
         var currentdate = year + seperator1 + month + seperator1 + strDate;
 
         return currentdate;
-
     }
 
     function checkTime(i){
