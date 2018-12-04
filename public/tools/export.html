@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet"></link>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
+    <title>export</title>   
+
+ <script>
+      $(document).ready(function(){
+          var localDataKey="eptco_scan";
+          loadData()
+
+          function loadData(){
+                var temp=localStorage.getItem(localDataKey);
+                // console.log(temp);
+                var data=JSON.parse(temp);
+                for(var i in data){
+                    $("#container").append(data[i].devid);
+                    $("#container").append("<br>")
+
+                }
+                
+            }
+
+
+      });
+
+
+
+</script>
+
+
+
+</head>
+
+<body>
+    <div id="container">
+
+    </div>
+  
+</body>
+</html>
