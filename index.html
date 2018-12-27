@@ -111,7 +111,7 @@
                 +'<td class="hdd"><select><option value="0"></option><option value="1">500G</option><option value="2">1T</option><option value="3">2T</option></select></td>'
                 +'<td class="up"><input type="checkbox" checked="checked"></td>'
                 +'<td class="defective"><input type="checkbox"></td>'
-                +'<td class="pof"><select><option value="0"></option><option value="1">DAMAGE</option><option value="2">IR/NIGHT VISION</option><option value="3">Black Screen</option><option value="4">CABLE</option><option value="5">PURPLE</option><option value="6">SOLID GREEN</option><option value="7">UPDATE FAILED</option><option value="8">NO POWER/DEAD</option></select></td>'
+                +'<td class="pof"><select><option value="0"></option><option value="1">DAMAGE</option><option value="2">IR/NIGHT VISION</option><option value="3">Black Screen</option><option value="4">CABLE</option><option value="5">PURPLE</option><option value="6">SOLID GREEN</option><option value="7">UPDATE FAILED</option><option value="8">NO POWER/DEAD</option><option value="9">AUDIO</option></select></td>'
                 +'<td class="note1"><input type="text" name="nnote1"></td>'
                 +'<td class="note2"><input type="text" name="nnote2"></td>'
                 +'<td class="time">'+data[i].time+'</td>'
@@ -157,6 +157,7 @@
                 if (event.keyCode==13) {
                     
                   // var date=new Date();
+          
                   addItem($("#input_id").val());
                   saveData();
                   updateQty();
@@ -310,7 +311,7 @@
                 +'<td class="hdd"><select><option value="0"></option><option value="1">500G</option><option value="2">1T</option><option value="3">2T</option></select></td>'
                 +'<td class="up"><input type="checkbox" checked="checked"></td>'
                 +'<td class="defective"><input type="checkbox"></td>'
-                +'<td class="pof"><select><option value="0"></option><option value="1">DAMAGE</option><option value="2">IR/NIGHT VISION</option><option value="3">Black Screen</option><option value="4">CABLE</option><option value="5">PURPLE</option><option value="6">SOLID GREEN</option><option value="7">UPDATE FAILED</option><option value="8">NO POWER/DEAD</option></select></td>'
+                +'<td class="pof"><select><option value="0"></option><option value="1">DAMAGE</option><option value="2">IR/NIGHT VISION</option><option value="3">Black Screen</option><option value="4">CABLE</option><option value="5">PURPLE</option><option value="6">SOLID GREEN</option><option value="7">UPDATE FAILED</option><option value="8">NO POWER/DEAD</option>><option value="9">AUDIO</option></select></td>'
                 +'<td class="note1"><input type="text" name="nnote1"></td>'
                 +'<td class="note2"><input type="text" name="nnote2"></td>'
                 +'<td class="time">'+getNowFormatDate()+'</td>'
